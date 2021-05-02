@@ -19,5 +19,9 @@ class MetricoolServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/laravel-metricool.php', 'laravel-metricool');
+
+        $this->app->singleton('laravel-metricool', function () {
+            return new Metricool();
+        });
     }
 }
