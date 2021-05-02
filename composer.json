@@ -1,0 +1,60 @@
+{
+    "name": "carloosolrac/laravel-metricool",
+    "description": "Laravel Metricool API",
+    "keywords": [
+        "carloosolrac",
+        "laravel-metricool"
+    ],
+    "homepage": "https://github.com/carloosolrac/laravel-metricool",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Carlos Solrac",
+            "email": "zidencjb@gmail.com",
+            "homepage": "https://spatie.be",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.4",
+        "illuminate/contracts": "^8.0"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.16",
+        "orchestra/testbench": "^6.0",
+        "phpunit/phpunit": "^9.3",
+        "vimeo/psalm": "^3.11"
+    },
+    "autoload": {
+        "psr-4": {
+            "Carloosolrac\\Metricool\\": "src",
+            "Carloosolrac\\Metricool\\Database\\Factories\\": "database/factories"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Carloosolrac\\Metricool\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "psalm": "vendor/bin/psalm",
+        "test": "vendor/bin/phpunit --colors=always",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage",
+        "format": "vendor/bin/php-cs-fixer fix --allow-risky=yes"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Carloosolrac\\Metricool\\MetricoolServiceProvider"
+            ],
+            "aliases": {
+                "Metricool": "Carloosolrac\\Metricool\\MetricoolFacade"
+            }
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
