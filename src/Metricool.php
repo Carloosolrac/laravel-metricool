@@ -32,22 +32,35 @@ class Metricool
         return Http::get($this->getUrl('api/admin/profiles'))->json();
     }
 
+    public function removePost($id)
+    {
+        $this->fields = [];
+        $this->addField('blogId', (int)$this->company);
+        $this->addField('id', $id['id']);
+
+        return Http::get($this->getUrl('api/actions/deleteProgrammedTW'))->body();
+    }
+
     public function editDraft($post, $draft)
     {
         $this->fields = [];
-        $this->addField('userId', $this->user);
+        $this->addField('userId', (int)$this->user);
         $this->addField('userToken', $this->token);
-        $this->addField('blogId', $this->company);
+        $this->addField('blogId', (int)$this->company);
         $this->addField('draft', $draft);
 
-        $this->addField('boost', $post['boost']);
         $this->addField('date', \Carbon\Carbon::parse($post['dateTime'])->format('d/m/Y'));
+
+        $this->addField('boost', $post['boost']);
         $this->addField('igDirect', $post['igDirect']);
         $this->addField('igLocation', $post['igLocation']);
         $this->addField('igTags', $post['igTags']);
+        $this->addField('pictures', $post['mediaUrls'][0]);
+        $this->addField('networks[]', 'facebook');
         $this->addField('iglink', $post['igLink']);
-        $this->addField('providers', array_keys($post['providers']));
-        $this->addField('networks', 'facebook');
+        $this->addField('networks[]', 'instagram');
+
+        $this->addField('networks', array_keys($post['providers']));
 
         $this->addField('pictures', $post['mediaUrls']);
         $this->addField('shortener', $post['shortener']);
@@ -56,7 +69,10 @@ class Metricool
         $this->addField('timezone', $post['timezone']);
 
 
-        return Http::asForm()->post($this->base . 'api/actions/schedule-new-post', $this->fields)->body();
+        // return $this->base . 'api/actions/schedule-new-post';
+
+
+        return Http::asForm()->post($this->getUrl('api/actions/schedule-new-post'))->body();
     }
 
     public function editDraft2($post, $draft)
@@ -171,13 +187,7 @@ class Metricool
 
     public function getAllPostsDraft()
     {
-        $this->addField('blogId', $this->company);
-        $this->addField('start', 116918100000);
-        $this->addField('end', 2017573600000);
-        $this->addField('timezone', 'America/Santiago');
-
-
-        return collect($this->call('api/actions/programmed-posts'))->where('draft', true);
+        return collect($this->getAllPosts())->where('draft', true);
     }
 
     private function call($url)
@@ -202,6 +212,9 @@ class Metricool
             'userId' => $this->user,
             'userToken' => $this->token
         ]));
+
+        $query = preg_replace('/%5B(?:[0-9]|[1-9][0-9]+)%5D=/', '=', $query);
+
 
         return $this->base . $path . '?' . $query;
     }
