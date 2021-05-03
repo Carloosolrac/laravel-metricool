@@ -75,105 +75,6 @@ class Metricool
         return Http::asForm()->post($this->getUrl('api/actions/schedule-new-post'))->body();
     }
 
-    public function editDraft2($post, $draft)
-    {
-        $this->fields = [];
-        $this->addField('blogId', $this->company);
-
-        $data = [
-            'text' => $post['text'],
-            'shortener' => $post['shortener'],
-            'iglink' => null,
-            'date' => \Carbon\Carbon::parse($post['dateTime'])->format('d/m/Y'),
-            'timezone' => $post['timezone'],
-            'boost' => $post['boost'],
-            'draft' => $draft,
-            'tw' => in_array('twitter', array_keys($post['providers'])),
-            'fb' => in_array('facebook', array_keys($post['providers'])),
-            'ig' => in_array('instagram', array_keys($post['providers'])),
-            'in' => in_array('linkedin', array_keys($post['providers'])),
-            'gmb' => in_array('gmb', array_keys($post['providers'])),
-            'time' => \Carbon\Carbon::parse($post['dateTime'])->format('H:i'),
-        ];
-
-        foreach ($post['mediaUrls'] as $index => $image) {
-            $data['picture'. $index] = $image;
-        }
-
-
-
-        $data = [
-            [
-                'name' => 'text',
-                'contents' => $post['text'],
-                ],
-            [
-                'name' => 'shortener',
-                'contents' => $post['shortener'],
-                ],
-            [
-                'name' => 'iglink',
-                'contents' => null,
-                ],
-            [
-                'name' => 'date',
-                'contents' => \Carbon\Carbon::parse($post['dateTime'])->format('d/m/Y'),
-                ],
-            [
-                'name' => 'timezone',
-                'contents' => $post['timezone'],
-                ],
-            [
-                'name' => 'boost',
-                'contents' => $post['boost'],
-                ],
-            [
-                'name' => 'draft',
-                'contents' => $draft,
-                ],
-            [
-                'name' => 'tw',
-                'contents' => in_array('twitter', array_keys($post['providers'])),
-                ],
-            [
-                'name' => 'fb',
-                'contents' => in_array('facebook', array_keys($post['providers'])),
-                ],
-            [
-                'name' => 'ig',
-                'contents' => in_array('instagram', array_keys($post['providers'])),
-                ],
-            [
-                'name' => 'in',
-                'contents' => in_array('linkedin', array_keys($post['providers'])),
-                ],
-            [
-                'name' => 'gmb',
-                'contents' => in_array('gmb', array_keys($post['providers'])),
-                ],
-            [
-                'name' => 'time',
-                'contents' => \Carbon\Carbon::parse($post['dateTime'])->format('H:i'),
-                ],
-        ];
-
-
-        
-
-        $boundary = '----WebKitFormBoundarytrURl3lQQkyS4UcC';
-
-        return Http::
-            withOptions([
-                'headers' => [
-                    'Connection' => 'close',
-                    'Content-Type' => 'multipart/form-data; boundary='.$boundary,
-                ],
-                'body' => new \GuzzleHttp\Psr7\MultipartStream($data, $boundary),
-            ])
-            ->post($this->getUrl('scheduleTweet'))
-            ->body();
-    }
-
     public function getAllPosts()
     {
         $this->addField('blogId', $this->company);
@@ -182,12 +83,34 @@ class Metricool
         $this->addField('timezone', 'America/Santiago');
 
 
-        return $this->call('api/actions/programmed-posts');
+        return $this->call('api/actions/scheduled-posts');
     }
 
     public function getAllPostsDraft()
     {
         return collect($this->getAllPosts())->where('draft', true);
+    }
+
+    public function getPendings()
+    {
+        return collect($this->getAllPosts())->where('draft', false)->filter(function ($post) {
+            foreach ($post['providers'] as $provider) {
+                if ($provider['status'] === 'PENDING') {
+                    return true;
+                }
+            }
+        });
+    }
+
+    public function getPublished()
+    {
+        return collect($this->getAllPosts())->where('draft', false)->filter(function ($post) {
+            foreach ($post['providers'] as $provider) {
+                if ($provider['status'] === 'PUBLISHED') {
+                    return true;
+                }
+            }
+        });
     }
 
     private function call($url)
