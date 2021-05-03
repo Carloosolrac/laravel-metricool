@@ -20,7 +20,7 @@ class MetricoolServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/laravel-metricool.php', 'laravel-metricool');
 
-        $this->app->singleton('laravel-metricool', function () {
+        $this->app->bind('laravel-metricool', function () {
             return new Metricool();
         });
     }
