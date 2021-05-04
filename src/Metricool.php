@@ -65,7 +65,7 @@ class Metricool
         $this->addField('pictures', $post['mediaUrls']);
         $this->addField('shortener', $post['shortener']);
         $this->addField('text', $post['text']);
-        $this->addField('time', \Carbon\Carbon::now()->format('H:i'));
+        $this->addField('time', \Carbon\Carbon::parse($post['dateTime'])->format('H:i'));
         $this->addField('timezone', $post['timezone']);
 
 
