@@ -55,10 +55,7 @@ class Metricool
         $this->addField('igDirect', $post['igDirect']);
         $this->addField('igLocation', $post['igLocation']);
         $this->addField('igTags', $post['igTags']);
-        $this->addField('pictures', $post['mediaUrls'][0]);
-        $this->addField('networks[]', 'facebook');
         $this->addField('iglink', $post['igLink']);
-        $this->addField('networks[]', 'instagram');
 
         $this->addField('networks', array_keys($post['providers']));
 
