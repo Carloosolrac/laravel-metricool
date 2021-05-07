@@ -60,6 +60,7 @@ class Metricool
         $this->addField('networks', array_keys($post['providers']));
 
         $this->addField('pictures', $post['mediaUrls']);
+        // $this->addField('pictures', ['http://newsletter.muycomputer.com/muypymes/ebook-email-marketing-web.pdf']);
         $this->addField('shortener', $post['shortener']);
         $this->addField('text', $post['text']);
         $this->addField('time', \Carbon\Carbon::parse($post['dateTime'])->format('H:i'));
