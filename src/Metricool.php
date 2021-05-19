@@ -41,6 +41,31 @@ class Metricool
         return Http::get($this->getUrl('api/actions/deleteProgrammedTW'))->body();
     }
 
+    public function createPost($post)
+    {
+        $this->fields = [];
+        $this->addField('userId', (int)$this->user);
+        $this->addField('userToken', $this->token);
+        $this->addField('blogId', (int)$this->company);
+        $this->addField('draft', $post['draft']);
+
+        $this->addField('date', $post['dateTime']->format('d/m/Y'));
+
+        $this->addField('networks', $post['providers']);
+
+        $this->addField('pictures', $post['mediaUrls']);
+        $this->addField('shortener', false);
+        $this->addField('text', $post['text']);
+        $this->addField('time', $post['dateTime']->format('H:i'));
+        $this->addField('timezone', 'America/Santiago');
+
+
+        // return $this->base . 'api/actions/schedule-new-post';
+
+
+        return Http::asForm()->post($this->getUrl('api/actions/schedule-new-post'))->body();
+    }
+
     public function editDraft($post, $draft)
     {
         $this->fields = [];
